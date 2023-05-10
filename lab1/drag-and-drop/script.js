@@ -5,8 +5,8 @@ window.addEventListener('DOMContentLoaded', () => {
     draggable.style.width = width
     draggable.style.height = height
 
-    let x= 100
-    let y= 100
+    let x = 100
+    let y = 100
     let dX = 0
     let dY = 0
 
@@ -16,22 +16,24 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     move()
-    
+
     draggable.addEventListener('dragstart', (event) => {
+        // TODO: два Картмана
+        // TODO: без этого костыля
         setTimeout(() => {
             draggable.classList.add('hide')
         }, 0)
 
-        dX = event.clientX - x;
-        dY = event.clientY - y;
+        dX = event.clientX - x
+        dY = event.clientY - y
     })
 
     draggable.addEventListener('dragend', (event) => {
-        draggable.classList.remove('hide')
-        const clientY = event.clientY < 0 ? 0 : event.clientY;
-        const clientX = event.clientX < 0 ? 0 : event.clientX;
+        const clientY = event.clientY < 0 ? 0 : event.clientY
+        const clientX = event.clientX < 0 ? 0 : event.clientX
         y = clientY - dY
         x = clientX - dX
         move()
+        draggable.classList.remove('hide')
     })
 })

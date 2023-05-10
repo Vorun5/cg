@@ -19,15 +19,17 @@ body {
     width: 490px;
     height: 100%;
 }
-
+/* TODO: сделать  */
+/* TODO: буквы должны отскакивать от нижнего края */
 .letter {
     display: inline-block;
     position: absolute;
     top: 200px;
     animation-name: letter;
     animation-iteration-count: infinite;
-    animation-direction: alternate-reverse;
-    animation-timing-function: cubic-bezier(0, 0, 0, 0);
+    animation-direction: alternate;
+    animation-timing-function: ease-out;
+    /* animation-timing-function: cubic-bezier(0, 0, 0, 0); */
 }
 
 .letter:nth-child(1) {
