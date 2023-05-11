@@ -1,45 +1,65 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="icon" href="statics/favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="style.css"/>
-    <script src="script.js"></script>
-    <title>alchemy</title>
-</head>
-<body>
-<div class="boards">
-    <div class="board">
-        <h2 class="board-title">
-            Открытые элементы
-            (<span id="unlocked-elements-count"></span> из <span id="elements-count"></span>)
-        </h2>
-        <div id="elements" class="elements"></div>
-        <button
-            class="button sort-button"
-            type="button"
-            name="sort"
-            onclick="sortElements()"
-        >
-            <span>Сортировать</span>
-        </button>
-    </div>
-    <div class="board">
-        <h2 class="board-title">Поле для эксперементов</h2>
-        <div id="laboratory" class="laboratory">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="statics/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="style.css" />
+        <script src="script.js"></script>
+        <title>alchemy</title>
+    </head>
+    <body>
+        <div class="use-mouse">
+            Играть в Алхимию можно только на устройствах с мышкой!
         </div>
-        <button
-            class="button delete-button"
-            type="button"
-            name="delete"
-            onclick="deleteLaboratoryElements()"
-        >
-            <img draggable="false" src="statics/delete.png" alt="delete"/>
-        </button>
-    </div>
-</div>
-<div id="notifications" class="notifications"></div>
-</body>
+        <div id="game-over" style="display: none;">
+            <img
+                src="https://cdn.betterttv.net/emote/5590b223b344e2c42a9e28e3/3x.webp"
+                alt="EZ"
+            />
+            <img
+                src="https://cdn.betterttv.net/emote/55b6f480e66682f576dd94f5/3x.webp"
+                alt="Clap"
+            />
+            <span>Поздравляю, вы открыли все элементы и прошли игру!</span>
+        </div>
+        <div class="boards">
+            <div class="board">
+                <h2 class="board-title">
+                    Открытые элементы (<span
+                        id="unlocked-elements-count"
+                    ></span>
+                    из <span id="elements-count"></span>)
+                </h2>
+                <div id="elements" class="elements"></div>
+                <button
+                    class="button sort-button"
+                    type="button"
+                    name="sort"
+                    onclick="sortElements()"
+                >
+                    <span>Сортировать</span>
+                </button>
+            </div>
+            <div class="board" id="laboratory-wrapper">
+                <h2 class="board-title">Поле для эксперементов</h2>
+                <div id="laboratory" class="laboratory"></div>
+                <button
+                    id="delete"
+                    class="button delete-button"
+                    type="button"
+                    name="delete"
+                    onclick="deleteLaboratoryElements()"
+                >
+                    <img
+                        draggable="false"
+                        src="statics/delete.png"
+                        alt="delete"
+                    />
+                </button>
+            </div>
+        </div>
+        <div id="notifications" class="notifications"></div>
+    </body>
 </html>

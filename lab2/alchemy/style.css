@@ -6,12 +6,42 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
 }
 
 body {
     background-color: rgb(25, 25, 25);
     position: relative;
     min-height: 100vh;
+}
+
+.use-mouse {
+    height: 100vh;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background-color: rgb(58, 58, 58);
+    font-size: 24px;
+    font-family: 'Roboto', sans-serif;
+    color: white;
+}
+
+#game-over {
+    padding: 30px;
+    margin: 10px;
+    border-radius: 16px;
+    background-color: rgb(58, 58, 58);
+    text-align: center;
+    font-size: 24px;
+    font-family: 'Roboto', sans-serif;
+    color: white;
+}
+
+#game-over span {
+    display: block;
 }
 
 .notifications {
@@ -21,8 +51,8 @@ body {
     padding: 0 20px;
     text-align: center;
     width: 100%;
-    position: absolute;
-    bottom: 20px;
+    position: fixed;
+    top: calc(100vh - 90px);
 }
 
 .notification {
@@ -148,4 +178,14 @@ body {
 
 .laboratory__hovered {
     background-color: transparent;
+}
+
+@media (pointer: coarse) {
+    .boards {
+        display: none;
+    }
+
+    .use-mouse {
+        display: flex;
+    }
 }
