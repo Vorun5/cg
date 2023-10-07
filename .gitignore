@@ -3,3 +3,8 @@
 **/.vs
 **/noted.txt
 *.docx
+**/.vscode
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
