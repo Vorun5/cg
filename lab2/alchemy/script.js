@@ -213,7 +213,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             notification.remove()
-        }, 3000)
+        }, 2000)
     }
     const createElementBlock = (element, id, absolute) => {
         const elementWrapper = document.createElement('div')
@@ -267,8 +267,8 @@ window.addEventListener('DOMContentLoaded', () => {
     deleteLaboratoryElements = () => {
         while (laboratory.firstChild) {
             laboratory.removeChild(laboratory.firstChild)
-            laboratoryElements = []
         }
+        laboratoryElements = []
         createNotification('Все элементы удалены из лаборатории')
     }
 
