@@ -1,10 +1,8 @@
 
 #include <GLFW/glfw3.h>
-#include <chrono>
 #include <stdexcept>
 #include <glm/glm.hpp>
 #include <vector>
-#include <functional>
 
 class GLFWInitializer final
 {
@@ -25,6 +23,7 @@ public:
 		glfwTerminate();
 	}
 };
+
 
 class BaseWindow
 {
@@ -77,6 +76,7 @@ public:
 
 		while (!glfwWindowShouldClose(m_window))
 		{
+			glClear(GL_COLOR_BUFFER_BIT);
 			int w, h;
 			glfwGetFramebufferSize(m_window, &w, &h);
 			Draw(w, h);
@@ -111,7 +111,6 @@ private:
 };
 
 
-
 class CubicBezierCurve : public BaseWindow
 {
 public:
@@ -128,7 +127,7 @@ private:
 	bool m_isDragging = false;
 
 	// Функция для вычисления биномиального коэффициента C(n, k)
-	float calculateBinomialCoefficient(int n, int k) {
+	float CalculateBinomialCoefficient(int n, int k) {
 		int numerator = 1;
 		int denominator = 1;
 		for (int i = 0; i < k; i++) {
@@ -139,11 +138,11 @@ private:
 	}
 
 	// Функция для вычисления точки на кривой Безье
-	glm::vec2 calculateBezierPoint(float t) {
+	glm::vec2 CalculateBezierPoint(float t) {
 		int n = m_controlPoints.size() - 1;
 		glm::vec2 point(0.0f, 0.0f);
 		for (int i = 0; i <= n; i++) {
-			float binomialCoefficient = calculateBinomialCoefficient(n, i);
+			float binomialCoefficient = CalculateBinomialCoefficient(n, i);
 			float term1 = pow(1.0f - t, n - i);
 			float term2 = pow(t, i);
 			point += binomialCoefficient * term1 * term2 * m_controlPoints[i];
@@ -152,7 +151,7 @@ private:
 	}
 
 	// Функция для отрисовки пунктирных линий между точками
-	void drawDashedLines() {
+	void DrawDashedLines() {
 		glLineStipple(1, 0xAAAA); // Устанавливаем пунктирный стиль линии
 		glEnable(GL_LINE_STIPPLE);
 
@@ -167,40 +166,6 @@ private:
 		glEnd();
 
 		glDisable(GL_LINE_STIPPLE); // Отключаем пунктирный стиль
-	}
-
-	// Функция для отрисовки сцены
-	void drawScene() {
-		glClear(GL_COLOR_BUFFER_BIT);
-		glColor3f(1.0f, 0.0f, 0.0f); // Устанавливаем красный цвет линии
-		glLineWidth(3.0f); // Устанавливаем толщину линии
-
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i <= M_NUM_SEGMENTS; i++) {
-			float t = static_cast<float>(i) / static_cast<float>(M_NUM_SEGMENTS);
-			glm::vec2 point = calculateBezierPoint(t);
-			glVertex2f(point.x, point.y);
-		}
-		glEnd();
-
-		// Рисуем управляющие точки
-		glColor3f(0.0f, 0.0f, 1.0f); // Устанавливаем синий цвет для управляющих точек
-		glPointSize(14.0f); // Устанавливаем размер точек
-		glBegin(GL_POINTS);
-
-		for (int i = 0; i < m_controlPoints.size(); i++) {
-			if (i == m_selectedPointIndex) {
-				glColor3f(1.0f, 0.0f, 0.0f); // Устанавливаем красный цвет для выбранной точки
-			}
-			glVertex2f(m_controlPoints[i].x, m_controlPoints[i].y);
-			if (i == m_selectedPointIndex) {
-				glColor3f(0.0f, 0.0f, 1.0f); // Возвращаем синий цвет для остальных точек
-			}
-		}
-		glEnd();
-
-		// Рисуем пунктирные линии между точками
-		drawDashedLines();
 	}
 
 	// Функция для обработки событий мыши
@@ -241,7 +206,35 @@ private:
 
 	void Draw(int width, int height) override
 	{
-		drawScene();
+		glColor3f(1.0f, 0.0f, 0.0f); // Устанавливаем красный цвет линии
+		glLineWidth(3.0f); // Устанавливаем толщину линии
+
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i <= M_NUM_SEGMENTS; i++) {
+			float t = static_cast<float>(i) / static_cast<float>(M_NUM_SEGMENTS);
+			glm::vec2 point = CalculateBezierPoint(t);
+			glVertex2f(point.x, point.y);
+		}
+		glEnd();
+
+		// Рисуем управляющие точки
+		glColor3f(0.0f, 0.0f, 1.0f); // Устанавливаем синий цвет для управляющих точек
+		glPointSize(14.0f); // Устанавливаем размер точек
+		glBegin(GL_POINTS);
+
+		for (int i = 0; i < m_controlPoints.size(); i++) {
+			if (i == m_selectedPointIndex) {
+				glColor3f(1.0f, 0.0f, 0.0f); // Устанавливаем красный цвет для выбранной точки
+			}
+			glVertex2f(m_controlPoints[i].x, m_controlPoints[i].y);
+			if (i == m_selectedPointIndex) {
+				glColor3f(0.0f, 0.0f, 1.0f); // Возвращаем синий цвет для остальных точек
+			}
+		}
+		glEnd();
+
+		// Рисуем пунктирные линии между точками
+		DrawDashedLines();
 	}
 };
 
@@ -250,4 +243,5 @@ int main()
 	GLFWInitializer initGLFW;
 	CubicBezierCurve bizier{ 800, 600, "Cubic Bezier Curve" };
 	bizier.Run();
+	return 0;
 }
