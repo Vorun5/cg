@@ -5,7 +5,7 @@
 class BaseWindow
 {
 public:
-	BaseWindow(int w, int h, const char* title)
+	BaseWindow(int w, int h, const char* title, double maxFps)
 		: m_window{ MakeWindow(w, h, title) }
 	{
 		if (!m_window)
@@ -39,7 +39,6 @@ public:
 		glfwDestroyWindow(m_window);
 	}
 
-
 	void Run() {
 		glfwMakeContextCurrent(m_window);
 		int width, height;
@@ -56,12 +55,23 @@ public:
 
 		OnRunStart();
 
+		const double targerFrameTime = 1.0 / m_maxFps;
+		double lastFrameTime = glfwGetTime();
+
 		while (!glfwWindowShouldClose(m_window))
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 			int w, h;
 			glfwGetFramebufferSize(m_window, &w, &h);
 			
+			/*
+			double currentTime = glfwGetTime();
+			if (currentTime - lastFrameTime >= 1.0 / m_maxFps)
+			{
+				lastFrameTime = currentTime;
+				Draw(w, h);
+			}
+			*/
 			Draw(w, h);
 
 			glFinish();
@@ -72,6 +82,8 @@ public:
 	};
 
 private:
+	double m_maxFps;
+
 	static BaseWindow* GetBaseWindow(GLFWwindow* window) {
 		return reinterpret_cast<BaseWindow*>(glfwGetWindowUserPointer(window));
 	};

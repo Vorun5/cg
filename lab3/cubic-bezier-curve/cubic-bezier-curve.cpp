@@ -60,9 +60,9 @@ public:
 
 	void Run() {
 		glfwMakeContextCurrent(m_window);
-		// Запретить изменения размера окна
 		int width, height;
 		glfwGetWindowSize(m_window, &width, &height);
+		// Запретить изменения размера окна
 		glfwSetWindowSizeLimits(m_window, width, height, width, height);
 		// Изменение начальной точки координат (как в html, css)
 		glMatrixMode(GL_PROJECTION);
@@ -117,11 +117,9 @@ public:
 	using BaseWindow::BaseWindow;
 
 private:
-	// Глобальные переменные для хранения точек кривой Безье
 	std::vector<glm::vec2> m_controlPoints;
-	const int M_NUM_SEGMENTS = 100;
+	const int M_NUM_SEGMENTS = 300;
 
-	// Переменные для управления перемещением точек
 	int m_selectedPointIndex = -1;
 	glm::vec2 m_offset;
 	bool m_isDragging = false;
@@ -155,8 +153,8 @@ private:
 		glLineStipple(1, 0xAAAA); // Устанавливаем пунктирный стиль линии
 		glEnable(GL_LINE_STIPPLE);
 
-		glColor3f(0.0f, 0.0f, 0.0f); // Устанавливаем черный цвет линии
-		glLineWidth(1.0f); // Устанавливаем толщину линии
+		glColor3f(0.0f, 0.0f, 0.0f);
+		glLineWidth(1.0f);
 
 		glBegin(GL_LINES);
 		for (int i = 0; i < m_controlPoints.size() - 1; i++) {
@@ -165,7 +163,7 @@ private:
 		}
 		glEnd();
 
-		glDisable(GL_LINE_STIPPLE); // Отключаем пунктирный стиль
+		glDisable(GL_LINE_STIPPLE);
 	}
 
 	// Функция для обработки событий мыши
@@ -206,8 +204,9 @@ private:
 
 	void Draw(int width, int height) override
 	{
-		glColor3f(1.0f, 0.0f, 0.0f); // Устанавливаем красный цвет линии
-		glLineWidth(3.0f); // Устанавливаем толщину линии
+		// Рисуем кривую
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glLineWidth(3.0f);
 
 		glBegin(GL_LINE_STRIP);
 		for (int i = 0; i <= M_NUM_SEGMENTS; i++) {
@@ -218,22 +217,21 @@ private:
 		glEnd();
 
 		// Рисуем управляющие точки
-		glColor3f(0.0f, 0.0f, 1.0f); // Устанавливаем синий цвет для управляющих точек
-		glPointSize(14.0f); // Устанавливаем размер точек
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glPointSize(14.0f); 
 		glBegin(GL_POINTS);
 
 		for (int i = 0; i < m_controlPoints.size(); i++) {
 			if (i == m_selectedPointIndex) {
-				glColor3f(1.0f, 0.0f, 0.0f); // Устанавливаем красный цвет для выбранной точки
+				glColor3f(1.0f, 0.0f, 0.0f);
+			}
+			else {
+				glColor3f(0.0f, 0.0f, 1.0f);
 			}
 			glVertex2f(m_controlPoints[i].x, m_controlPoints[i].y);
-			if (i == m_selectedPointIndex) {
-				glColor3f(0.0f, 0.0f, 1.0f); // Возвращаем синий цвет для остальных точек
-			}
 		}
 		glEnd();
 
-		// Рисуем пунктирные линии между точками
 		DrawDashedLines();
 	}
 };

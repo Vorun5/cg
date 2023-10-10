@@ -2,21 +2,20 @@
 #include <cmath>
 
 const float Particle::radius = 15.0f;
-const float Particle::mass = 1.0f;
-const float Particle::coulombConstant = 0.02f;
+const float Particle::mass = 0.5f;
+const float Particle::coulombConstant = 0.05f;
 const float Particle::maxForce = 0.01f;
-const float Particle::maxSpeed = 0.9f;
+const float Particle::maxSpeed = 0.4f;
 
 Particle::Particle(float x, float y, float charge)
 	: m_x(x), m_y(y), m_charge(charge), m_vx(0.0f), m_vy(0.0f) {}
 
 void Particle::Update() {
-	// Обновление позиции частицы с учетом скорости
 	m_x += m_vx;
 	m_y += m_vy;
 
 	float speed = std::sqrt(m_vx * m_vx + m_vy * m_vy);
-	// Ограничение скорости, чтобы избежать слишком быстрого движения
+	// Ограничение скорости
 	if (speed > maxSpeed) {
 		m_vx = maxSpeed * (m_vx / speed);
 		m_vy = maxSpeed * (m_vy / speed);
@@ -24,13 +23,12 @@ void Particle::Update() {
 }
 
 void Particle::Render() {
-	// Отрисовка частицы как круга с цветом в зависимости от заряда
 	glBegin(GL_TRIANGLE_FAN);
 	if (m_charge > 0) {
-		glColor3f(1.0f, 0.0f, 0.0f); // Красный для положительной частицы
+		glColor3f(1.0f, 0.0f, 0.0f);
 	}
 	else {
-		glColor3f(0.0f, 0.0f, 1.0f); // Синий для отрицательной частицы
+		glColor3f(0.0f, 0.0f, 1.0f);
 	}
 
 	for (int i = 0; i <= 360; i += 10) {
@@ -41,21 +39,22 @@ void Particle::Render() {
 	}
 	glEnd();
 
-	glColor3f(1.0f, 1.0f, 1.0f); // Устанавливаем черный цвет
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glLineWidth(3.0f);
 	glBegin(GL_LINES);
 
+	const float padding = (Particle::radius / 2.0f) + 1;
 	if (m_charge > 0) {
-		// Рисуем символ "+"
-		glVertex2f(m_x - 8.0f, m_y);
-		glVertex2f(m_x + 8.0f, m_y);
-		glVertex2f(m_x, m_y - 8.0f);
-		glVertex2f(m_x, m_y + 8.0f);
+		// Cимвол "+"
+		glVertex2f(m_x - padding, m_y);
+		glVertex2f(m_x + padding, m_y);
+		glVertex2f(m_x, m_y - padding);
+		glVertex2f(m_x, m_y + padding);
 	}
 	else {
-		// Рисуем символ "-"
-		glVertex2f(m_x - 8.0f, m_y);
-		glVertex2f(m_x + 8.0f, m_y);
+		// Cимвол "-"
+		glVertex2f(m_x - padding, m_y);
+		glVertex2f(m_x + padding, m_y);
 	}
 	glEnd();
 }

@@ -6,11 +6,11 @@ class ParticleManager {
 public:
     ParticleManager();
 
-    void addParticle(float x, float y, float charge);
-    bool removeParticle(float x, float y);
-    void removeAllParticles();
-    void updateAllParticles(int width, int height);
-    void renderAllParticles();
+    void AddParticle(float x, float y, float charge);
+    bool RemoveParticle(float x, float y);
+    void RemoveAllParticles();
+    void UpdateAllParticles(int width, int height);
+    void RenderAllParticles();
 
 private:
     std::vector<Particle> particles;
