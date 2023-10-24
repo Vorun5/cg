@@ -1,11 +1,10 @@
 ﻿#pragma once
 #include "BaseWindow.h"
-#include <glm/glm.hpp>
+#include "Thor.h"
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <vector>
-#include <memory>
-#include "Thor.h"
+
 
 class Window : public BaseWindow
 {

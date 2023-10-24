@@ -10,11 +10,7 @@ Thor::Thor(float R, float r, int segmentsA, int segmentsB)
 
 	float deltaA = m_drawingDegree / m_segmentsA;
 	float deltaB = m_drawingDegree / m_segmentsB;
-	/*
-		Чтобы вычислить вектор нормали в конкретной точке тора, можно взять частные производные уравнений по параметрам ƒО и ƒХ, а затем нормализовать полученный вектор.
-		Альтернативно, если вы используете библиотеку программного обеспечения или платформу, предоставляющую геометрические функции, вы можете использовать предоставленные функции для расчета нормалей для поверхности тора. Например, в OpenCascade вы можете использовать класс GeomLProp_SLProps для вычисления нормалей поверхности тора.
-		Обратите внимание, что конкретная реализация может различаться в зависимости от используемого вами программного обеспечения или языка программирования.
-	*/
+
 	for (float angleA = 0.0f; angleA <= m_drawingDegree; angleA += deltaA) {
 		for (float angleB = 0.0f; angleB <= m_drawingDegree; angleB += deltaB) {
 			m_sides.push_back({
@@ -62,33 +58,30 @@ glm::vec3 Thor::CalculateNormalCoordinates(float angleA, float angleB) {
 void Thor::Draw() const
 {
 	glEnable(GL_COLOR_MATERIAL);
-	// Рассеянный свет
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	// Цвет отражения
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(m_lightColor));
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, m_shininess);
 
-
+	// Включение режима отбраковки граней
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
+	//  Эта строка устанавливает, что будут отсекаться задние (back) грани полигонов. 
+	glCullFace(GL_BACK);
 
 	glColor3f(m_thorColor.r, m_thorColor.g, m_thorColor.b);
 	glBegin(GL_QUADS);
 
 	for (auto& side : m_sides) {
-		glNormal3f(side.n4.x, side.n4.y, side.n4.z);
-		glVertex3f(side.p4.x, side.p4.y, side.p4.z);
-
-
-		glNormal3f(side.n3.x, side.n3.y, side.n3.z);
-		glVertex3f(side.p3.x, side.p3.y, side.p3.z);
+		glNormal3f(side.n1.x, side.n1.y, side.n1.z);
+		glVertex3f(side.p1.x, side.p1.y, side.p1.z);
 
 		glNormal3f(side.n2.x, side.n2.y, side.n2.z);
 		glVertex3f(side.p2.x, side.p2.y, side.p2.z);
 
+		glNormal3f(side.n3.x, side.n3.y, side.n3.z);
+		glVertex3f(side.p3.x, side.p3.y, side.p3.z);
 
-		glNormal3f(side.n1.x, side.n1.y, side.n1.z);
-		glVertex3f(side.p1.x, side.p1.y, side.p1.z);
+		glNormal3f(side.n4.x, side.n4.y, side.n4.z);
+		glVertex3f(side.p4.x, side.p4.y, side.p4.z);
 	}
 
 	glEnd();
