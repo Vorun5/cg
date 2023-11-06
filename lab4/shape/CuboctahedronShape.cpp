@@ -20,109 +20,24 @@ CuboctahedronShape::CuboctahedronShape(float size)
     SetSideColor(CuboctahedronSide::BACK_LOWER_RIGHT_TRIANGULAR, 146, 164, 161);
 }
 
-void CuboctahedronShape::DrawSquares() const
+void CuboctahedronShape::DrawSquares(const bool front) const
 {
-
-}
-
-void CuboctahedronShape::DrawTriangles() const
-{
-
-}
-
-
-void CuboctahedronShape::Draw() const
-{
-	static constexpr float vertices[12][3] = {
-		{ -1, -1, 0 },
-		{ 0, -1, +1 },
-		{ +1, -1, 0 },
-		{ 0, -1, -1 },
-		{ -1, 0, -1 },
-		{ +1, 0, -1 },
-		{ +1, +1, 0 },
-		{ +1, 0, +1 },
-		{ 0, +1, -1 },
-		{ -1, +1, 0 },
-		{ 0, +1, +1 },
-		{ -1, 0, +1 },
-	};
-
-	static constexpr unsigned char squareFaces[6][4] = {
-		{11, 1, 7, 10},
-		{4, 8, 5, 3},
-		{7, 2, 5, 6},
-		{0, 11, 9, 4},
-		{1, 0, 3, 2},
-		{10, 6, 8, 9},
-	};
-
-	static constexpr unsigned char triangularFaces[8][3] = {
-		{ 11, 10, 9 },
-		{ 10, 7, 6 },
-		{ 0, 1, 11 },
-		{ 1, 2, 7 },
-		{ 4, 9, 8 },
-		{ 8, 6, 5 },
-		{ 0, 4, 3 },
-		{ 3, 5, 2 },
-	};
-
-	static size_t const triangularFaceCount = sizeof(triangularFaces) / sizeof(*triangularFaces);
-	static size_t const squareFaceCount = sizeof(squareFaces) / sizeof(*squareFaces);
-
-	glEnable(GL_COLOR_MATERIAL);
-	// Цвет вершины будет управлять диффузным и фоновым цветом материала
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(m_lightColor));
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, m_shininess);
-
-
-	glBegin(GL_TRIANGLES);
-	{
-		for (size_t face = 0; face < triangularFaceCount; ++face)
-		{
-			glColor4ubv(m_sideColors[face + 6]);
-			const unsigned char* facePoints = triangularFaces[face];
-
-			// получаем вершины очередной грани куба
-			auto p0 = glm::make_vec3(vertices[facePoints[0]]);
-			auto p1 = glm::make_vec3(vertices[facePoints[1]]);
-			auto p2 = glm::make_vec3(vertices[facePoints[2]]);
-
-			// Вычисляем координаты вершин куба с учетом его размера
-			p0 *= m_size * m_size;
-			p1 *= m_size * m_size;
-			p2 *= m_size * m_size;
-
-			// Вычисляем нормаль к грани куба через
-			// векторное произведение его смежных сторон
-			auto v01 = p1 - p0;
-			auto v02 = p2 - p0;
-			auto normal = glm::normalize(glm::cross(v01, v02));
-
-			glNormal3fv(glm::value_ptr(normal));
-
-			glVertex3fv(glm::value_ptr(p0));
-			glVertex3fv(glm::value_ptr(p1));
-			glVertex3fv(glm::value_ptr(p2));
-		}
-	}
-	glEnd();
+	static size_t const squareFaceCount = sizeof(m_squareFaces) / sizeof(*m_squareFaces);
 
 	glBegin(GL_QUADS);
 	{
 		for (size_t face = 0; face < squareFaceCount; ++face)
 		{
 			glColor4ubv(m_sideColors[face]);
-			const unsigned char* facePoints = squareFaces[face];
+
+			const unsigned char* facePoints = m_squareFaces[face];
 
 			// получаем вершины очередной грани куба
-			auto p0 = glm::make_vec3(vertices[facePoints[0]]);
-			auto p1 = glm::make_vec3(vertices[facePoints[1]]);
-			auto p2 = glm::make_vec3(vertices[facePoints[2]]);
-			auto p3 = glm::make_vec3(vertices[facePoints[3]]);
-			
+			auto p0 = glm::make_vec3(m_vertices[facePoints[0]]);
+			auto p1 = glm::make_vec3(m_vertices[facePoints[1]]);
+			auto p2 = glm::make_vec3(m_vertices[facePoints[2]]);
+			auto p3 = glm::make_vec3(m_vertices[facePoints[3]]);
+
 			// Вычисляем координаты вершин куба с учетом его размера
 			p0 *= m_size * m_size;
 			p1 *= m_size * m_size;
@@ -134,9 +49,9 @@ void CuboctahedronShape::Draw() const
 			auto v01 = p1 - p0;
 			auto v02 = p2 - p0;
 			auto normal = glm::normalize(glm::cross(v01, v02));
+			if (!front) normal = -normal;
 
 			glNormal3fv(glm::value_ptr(normal));
-
 			glVertex3fv(glm::value_ptr(p0));
 			glVertex3fv(glm::value_ptr(p1));
 			glVertex3fv(glm::value_ptr(p2));
@@ -144,6 +59,63 @@ void CuboctahedronShape::Draw() const
 		}
 	}
 	glEnd();
+}
+
+void CuboctahedronShape::DrawTriangles(const bool front) const
+{
+	static size_t const triangularFaceCount = sizeof(m_triangularFaces) / sizeof(*m_triangularFaces);
+
+	glBegin(GL_TRIANGLES);
+	{
+		for (size_t face = 0; face < triangularFaceCount; ++face)
+		{
+			glColor4ubv(m_sideColors[face + 6]);
+			const unsigned char* facePoints = m_triangularFaces[face];
+
+			// получаем вершины очередной грани куба
+			auto p0 = glm::make_vec3(m_vertices[facePoints[0]]);
+			auto p1 = glm::make_vec3(m_vertices[facePoints[1]]);
+			auto p2 = glm::make_vec3(m_vertices[facePoints[2]]);
+
+			// Вычисляем координаты вершин куба с учетом его размера
+			p0 *= m_size * m_size;
+			p1 *= m_size * m_size;
+			p2 *= m_size * m_size;
+
+			auto normal = glm::normalize(glm::triangleNormal(p0, p1, p2));
+			if (!front) normal = -normal;
+			
+			glNormal3fv(glm::value_ptr(normal));
+			glVertex3fv(glm::value_ptr(p0));
+			glVertex3fv(glm::value_ptr(p1));
+			glVertex3fv(glm::value_ptr(p2));
+		}
+	}
+	glEnd();
+}
+
+void CuboctahedronShape::Draw() const
+{
+	glEnable(GL_COLOR_MATERIAL);
+	// Цвет вершины будет управлять диффузным и фоновым цветом материала
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, glm::value_ptr(m_lightColor));
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, m_shininess);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_CULL_FACE);
+
+	// Включем режим отбраковки передних граней	
+	glCullFace(GL_FRONT);
+	DrawTriangles(false);
+	DrawSquares(false);
+
+	// Включаем режим отбраковки внутрениих граней
+	glCullFace(GL_BACK);
+	DrawTriangles(true);
+	DrawSquares(true);
+
 }
 
 void CuboctahedronShape::SetSideColor(CuboctahedronSide side, GLubyte r, GLubyte g, GLubyte b, GLubyte a)

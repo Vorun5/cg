@@ -5,7 +5,7 @@
 class Thor
 {
 public:
-	Thor(float R = 0.7f, float r = 0.25f, int segmentsA = 100, int segmentsB = 200);
+	Thor(float R = 0.5f, float r = 0.25f, int segmentsA = 100, int segmentsB = 200);
 	
 	void Draw() const;
 
