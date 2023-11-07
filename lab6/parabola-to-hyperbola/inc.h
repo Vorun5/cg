@@ -14,3 +14,5 @@
 #include <vector>
 #include <string>
 #include <sstream>
+
+#include <glm/ext/vector_float3.hpp>

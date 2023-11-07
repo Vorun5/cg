@@ -1,11 +1,6 @@
 ﻿#pragma once
 #include "inc.h"
 
-struct Vertex
-{
-	float x, y, z;
-};
-
 class CSurface
 {
 public:

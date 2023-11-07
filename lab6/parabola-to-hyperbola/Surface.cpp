@@ -1,7 +1,6 @@
 #include "Surface.h"
 
-CSurface::CSurface(
-	int columns, int rows, float xMin, float xMax, float yMin, float yMax)
+CSurface::CSurface(int columns, int rows, float xMin, float xMax, float yMin, float yMax)
 	: m_rows(rows)
 	, m_columns(columns)
 	, m_xMin(xMin)
@@ -14,39 +13,35 @@ CSurface::CSurface(
 
 void CSurface::Draw()const
 {
-	// ѕри первом обращении к данной функции запишем команды 
-	// рисовани€ поверхности в дисплейный список
+	// ѕри первом обращении создаЄм дисплейны список (ƒисплейный список представл€ет собой оптимизированное хранилище команд OpenGL, которое можно записать один раз и многократно вызывать без повторного вычислени€ команд.)
 	if (m_displayList == 0)
 	{
 		m_displayList = glGenLists(1);
 		glNewList(m_displayList, GL_COMPILE);
 
-		// вычисл€ем шаг узлов сетки
+		// ¬ычисл€ем шаг узлов сетки
 		const float dy = (m_yMax - m_yMin) / (m_rows - 1);
 		const float dx = (m_xMax - m_xMin) / (m_columns - 1);
 
 		float y = m_yMin;
-		// пробегаем по строкам сетки
+		// ѕробегаем по строкам сетки
 		for (int row = 0; row < m_rows - 1; ++row, y += dy)
 		{
-			// каждой строке будет соответствовать сво€ лента из треугольников
+			//  аждой строке будет соответствовать сво€ лента из треугольников
+			// GL_TRIANGLES
 			glBegin(GL_TRIANGLE_STRIP);
 			float x = m_xMin;
 
-			// пробегаем по столбцам текущей строки
+			// ѕробегаем по столбцам текущей строки
 			for (int column = 0; column <= m_columns; ++column, x += dx)
 			{
-				// вычисл€ем параметры вершины в узлах пары соседних вершин
-				// ленты из треугольников
-				Vertex v0 = { x, y + dy, 0 };
-				Vertex v1 = { x, y, 0 };
+				// ¬ычисл€ем параметры вершины в узлах пары соседних вершин ленты из треугольников
+				glm::vec3 v0 = { x, y + dy, 0 };
+				glm::vec3 v1 = { x, y, 0 };
 
-				// задаем нормаль и координаты вершины на четной позиции
-				//glNormal3f(v0.nx, v0.ny, v0.nz);
+				//  оординаты вершины на четной позиции
 				glVertex3f(v0.x, v0.y, v0.z);
-
-				// задаем нормаль и координаты вершины на нечетной позиции
-				//glNormal3f(v1.nx, v1.ny, v1.nz);
+				//  оординаты вершины на нечетной позиции
 				glVertex3f(v1.x, v1.y, v1.z);
 			}
 			glEnd();
@@ -54,11 +49,10 @@ void CSurface::Draw()const
 		glEndList();
 	}
 
-	// ¬ызовем ранее записанный дисплейный список команд рисовани€ сетки
 	glCallList(m_displayList);
 }
 
-// Ќе забыли удалить дисплейный список при разрушении экземпл€ра класса
+// –азрушаем дисплейный список в деструкторе
 CSurface::~CSurface(void)
 {
 	if (m_displayList != 0)
