@@ -6,7 +6,7 @@ DWORD g_lastTick = GetTickCount();
 CMyApplication::CMyApplication(char const* title, Size windowSize)
 	: BaseApplication(title, windowSize.width, windowSize.height),
 	m_windowSize(windowSize),
-	m_surface(50, 50, -1, 1, -0.5, 0.5)
+	m_surface(25, 25, -0.5, 0.5, -0.5, 0.5)
 {
 }
 
@@ -19,12 +19,15 @@ void CMyApplication::OnInit()
 	glClearColor(1, 1, 1, 1);
 
 	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
 	gluLookAt(
 		2, 2, -1,  // Позиция камеры
 		0, 0, 0,   // Точка, на которую камера смотрит
 		1, 1, 0    // Вектор, указывающий направление "вверх"
 	);
-
+	
 	InitShaders();
 }
 
@@ -34,13 +37,24 @@ void CMyApplication::OnDisplay()
 	float timeInSeconds = (currentTick - g_lastTick) / 1000.0f;
 	g_lastTick = currentTick;
 
+	// С -1 до 3 - up
+	// С 3 до 0 - !up
 	static float workTime = 0;
-	workTime += timeInSeconds;
-	if (workTime >= 3)
-	{
-		workTime -= 4;
+	static bool up = true;
+	if (up) {
+		workTime += timeInSeconds;
+		if (workTime >= 3)
+		{
+			up = false;
+		}
 	}
-
+	if (!up) {
+		workTime -= timeInSeconds;
+		if (workTime < 0)
+		{
+			up = true;
+		}
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix();
@@ -65,7 +79,7 @@ void CMyApplication::OnReshape(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-aspect, +aspect, -1, 1, 1, 50);
+	gluPerspective(30.0, aspect, 1, 30);
 	glMatrixMode(GL_MODELVIEW);
 }
 
